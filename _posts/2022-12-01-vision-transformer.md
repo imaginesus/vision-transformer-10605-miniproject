@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Vision Transformers for Image Recognition at Scale
+tags: [transformers, image classification, NLP, CNN]
 authors: Sushanth Reddy (syellare), Maitheli Biswas (maithelb), Annie Johnson (anniej)
 ---
 
@@ -93,9 +94,9 @@ Before we dive further into ViTs, here is a quick summary of the key differences
   <figcaption align="center">Figure 3 - ViT model architecture</figcaption>
 </p>
 
-\ref{dosovitskiy2020image}[1] introduces the Vision Transformer for the task of image classification. Unlike a typical transformer architecture that consists of an encoder followed by a decoder, the ViT architecture as shown in figure 3, utilizes several encoder blocks to extract the image features and then employs a Multilayer Perceptron (MLP) head model to classify the image based on these processed features.
+Dosovitskiy et al., 2020 [1] introduces the Vision Transformer for the task of image classification. Unlike a typical transformer architecture that consists of an encoder followed by a decoder, the ViT architecture as shown in figure 3, utilizes several encoder blocks to extract the image features and then employs a Multilayer Perceptron (MLP) head model to classify the image based on these processed features.
 
-Each encoder block comprises alternating layers of Multi-Headed Self Attention (MSA), LayerNorm (LN) and MLP blocks which are fully connected feedforward layers[2]. Residual Skip connections are used after every MSA and MLP block to pass features from disconnected layers to other layers that are present deeper into the architecture [3]. Self-Attention introduced in \ref{vaswani2017attention}[4] is a technique used to understand the interaction between different tokens belonging to a particular sequence. If a certain token attends to another token, it means that they have an impact on each other with respect to the context of the entire sequence. Let us suppose that the input consists of an **m × n** matrix **I** composed of the **m n** dimensional word vectors associated with a sequence.  In self-attention, 3 sets of weight vectors are utilized, namely **W<sub>q</sub> , W<sub>k</sub> , and W<sub>v</sub>** of dimension **n × D**. **D** is the dimension of the embedding used in the transformer. The input matrix is separately multiplied with each weight matrix **W<sub>q</sub> , W<sub>k</sub> , and W<sub>v</sub>** to obtain the queries (**Q**), keys (**K**) and values (**V**) matrices, each of dimension **m × D**. This is illustrated in equations 1, 2 and 3. This step has a complexity of O(**mD<sup>2</sup>**).
+Each encoder block comprises alternating layers of Multi-Headed Self Attention (MSA), LayerNorm (LN) and MLP blocks which are fully connected feedforward layers[2]. Residual Skip connections are used after every MSA and MLP block to pass features from disconnected layers to other layers that are present deeper into the architecture [3]. Self-Attention introduced in Vaswani at al., 2017 [4] is a technique used to understand the interaction between different tokens belonging to a particular sequence. If a certain token attends to another token, it means that they have an impact on each other with respect to the context of the entire sequence. Let us suppose that the input consists of an **m × n** matrix **I** composed of the **m n** dimensional word vectors associated with a sequence.  In self-attention, 3 sets of weight vectors are utilized, namely **W<sub>q</sub> , W<sub>k</sub> , and W<sub>v</sub>** of dimension **n × D**. **D** is the dimension of the embedding used in the transformer. The input matrix is separately multiplied with each weight matrix **W<sub>q</sub> , W<sub>k</sub> , and W<sub>v</sub>** to obtain the queries (**Q**), keys (**K**) and values (**V**) matrices, each of dimension **m × D**. This is illustrated in equations 1, 2 and 3. This step has a complexity of O(**mD<sup>2</sup>**).
 
 Q = IW<sub>q</sub>			(1)
 
@@ -139,11 +140,11 @@ The table below shows the comparative results of the Vision Transformer variants
   <figcaption align="center">Table 2 - ViT variants model performance compared to ResNet(BiT)</figcaption>
 </p>
 
-Model Pre-training Requirements
+### Model Pre-training Requirements
 
 Based on the requirement of pre-training the Vision Transformer on large datasets before transferring the model, It begs the question of how crucial is the pre-training dataset size. To Examine this, two sets of experiments are performed.
 
-Experiment 1: Pre-Training ViT models on increasing dataset size.
+**Experiment 1: Pre-Training ViT models on increasing dataset size.**
 
 Below are the results of training ViT variants and ResNet on ImageNet, ImageNet-21k, and JFT datasets. We see that larger variants of ViT (ViT-Large and ViT-Huge) underperform the ViT-Base variant on the smaller pre-train dataset. But this changes as the pre-training dataset size increases where larger ViT variants perform better than ViT-Base, and also outperform ResNet by pre-training on JFT 300M dataset. 
 
@@ -152,7 +153,7 @@ Below are the results of training ViT variants and ResNet on ImageNet, ImageNet-
   <figcaption align="center">Figure 4 - Model performance vs pre-training dataset</figcaption>
 </p>
 
-Experiment 2: Pre-Training on subsets of the full JFT 300M images dataset
+**Experiment 2: Pre-Training on subsets of the full JFT 300M images dataset**
 
 Below are the results of training the ViT variants using the same hyperparameters on multiple subsets of the JFT 300M images dataset. Using the same hyperparameters helps us judge the intrinsic model properties of each ViT variant. We observe that ResNets perform well on smaller subsets of the dataset due to the inductive biases of CNNs. But as the dataset size increases, learning relevant patterns from the data trumps the lack of inductive biases in Transformers, and the ViT models perform better than ResNet models. 
 
@@ -181,28 +182,28 @@ After conducting the experiments, the authors inspect the Vision Transformer to 
   <figcaption align="center">Figure 7 - Plot of Mean attention distance versus Network depth of the ViT-L/16 model.</figcaption>
 </p>
 
-This research work presents a simple yet scalable strategy to perform image classification that supersedes conventional CNN architectures when combined with pre-training on large datasets. However, the authors also mention that this architecture could be employed in other computer vision applications as well. \ref{khan2022transformers}[7] is a survey paper that discusses many other works that extend the ViT to not only recognition tasks like image classification, object detection, action recognition, and segmentation, but also to generative modeling, multi-modal tasks like visual question answering, video processing, low-level vision and 3D analysis. The study also mentioned transformers like Linformer introduced in \ref{wang2020linformer}[8] and Reformer presented by \ref{kitaev2020reformer}[9] that reduced the complexity of self-attention from O(n2) to O(n) and O(n log(n)) respectively. This study concluded that for the different tasks, scaling up in terms of compute, model size and quantity of training data improves performance of the vision transformer. Overall, this research work has had a significant impact on the domain of computer vision as well as developing compute efficient models for large scale training of images.
+This research work presents a simple yet scalable strategy to perform image classification that supersedes conventional CNN architectures when combined with pre-training on large datasets. However, the authors also mention that this architecture could be employed in other computer vision applications as well. Khan et al., 2022 [7] is a survey paper that discusses many other works that extend the ViT to not only recognition tasks like image classification, object detection, action recognition, and segmentation, but also to generative modeling, multi-modal tasks like visual question answering, video processing, low-level vision and 3D analysis. The study also mentioned transformers like Linformer introduced in Wang et al., 2020 [8] and Reformer presented by Kitaev et al., 2020 [9] that reduced the complexity of self-attention from O(n<sup>2</sup>) to O(n) and O(n log(n)) respectively. This study concluded that for the different tasks, scaling up in terms of compute, model size and quantity of training data improves performance of the vision transformer. Overall, this research work has had a significant impact on the domain of computer vision as well as developing compute efficient models for large scale training of images.
 
 ## References
 
-[1] @article{dosovitskiy2020image, title={An image is worth 16x16 words: Transformers for image recognition at scale}, author={Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and others}, journal={arXiv preprint arXiv:2010.11929}, year={2020} }
+[1] Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and others. An image is worth 16x16 words: Transformers for image recognition at scale. arXiv preprint arXiv:2010.11929. 2020.
 
-[2] https://blog.paperspace.com/vision-transformers/
+[2] Anand, R. (2021, July 2). Vision Transformers Explained. Paperspace Blog. https://blog.paperspace.com/vision-transformers/
 
-[3] https://theaisummer.com/skip-connections/
+[3] Adaloglou, N. (2020, March 23). Intuitive Explanation of Skip Connections in Deep Learning. AI Summer. https://theaisummer.com/skip-connections/
 
-[4] @article{vaswani2017attention, title={Attention is all you need}, author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia}, journal={Advances in neural information processing systems}, volume={30}, year={2017} }
+[4] Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia. Attention is all you need. Advances in neural information processing systems, 2017
 
 [5] Y. LeCun, B. Boser, J. Denker, D. Henderson, R. Howard, W. Hubbard, and L. Jackel. Backpropagation applied to handwritten zip code recognition. Neural Computation, 1:541–551, 1989
 
 [6] Diederik P. Kingma and Jimmy Ba. Adam: A method for stochastic optimization. In ICLR, 2015. Alexander Kolesnikov, Lucas Beyer, Xiaohua Zhai, Joan Puigcerver, Jessica Yung, Sylvain Gelly, and Neil Houlsby. Big transfer (BiT): General visual representation learning. In ECCV, 2020.
 
-[7] @article{khan2022transformers, title={Transformers in vision: A survey}, author={Khan, Salman and Naseer, Muzammal and Hayat, Munawar and Zamir, Syed Waqas and Khan, Fahad Shahbaz and Shah, Mubarak}, journal={ACM computing surveys (CSUR)}, volume={54}, number={10s}, pages={1--41}, year={2022}, publisher={ACM New York, NY} }
+[7] Khan, Salman and Naseer, Muzammal and Hayat, Munawar and Zamir, Syed Waqas and Khan, Fahad Shahbaz and Shah, Mubarak. Transformers in vision: A survey. ACM computing surveys (CSUR), 2022.
 
-[8] @article{wang2020linformer, title={Linformer: Self-attention with linear complexity}, author={Wang, Sinong and Li, Belinda Z and Khabsa, Madian and Fang, Han and Ma, Hao}, journal={arXiv preprint arXiv:2006.04768}, year={2020} }
+[8] Wang, Sinong and Li, Belinda Z and Khabsa, Madian and Fang, Han and Ma, Hao. Linformer: Self-attention with linear complexity. arXiv preprint arXiv:2006.04768, 2020.
 
-[9] @article{kitaev2020reformer, title={Reformer: The efficient transformer}, author={Kitaev, Nikita and Kaiser, {\L}ukasz and Levskaya, Anselm}, journal={arXiv preprint arXiv:2001.04451}, year={2020} }
+[9] Kitaev, Nikita and Kaiser, {\L}ukasz and Levskaya, Anselm. Reformer: The efficient transformer. arXiv preprint arXiv:2001.04451, 2020.
 
-[10] https://viso.ai/deep-learning/vision-transformer-vit/
+[10] Boesch, G. (2022, August 23). Vision Transformers (ViT) in Image Recognition – 2022 Guide. viso.ai. https://viso.ai/deep-learning/vision-transformer-vit/
 
-[11] https://towardsdatascience.com/the-inductive-bias-of-ml-models-and-why-you-should-care-about-it-979fe02a1a56
+[11] Kumichev, G. (2022, June 17). The Inductive Bias of ML Models, and Why You Should Care About It. Medium. https://towardsdatascience.com/the-inductive-bias-of-ml-models-and-why-you-should-care-about-it-979fe02a1a56
