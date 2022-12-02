@@ -93,7 +93,27 @@ Before we dive further into ViTs, here is a quick summary of the key differences
   <figcaption align="center">Figure 3 - ViT model architecture</figcaption>
 </p>
 
-text
+\ref{dosovitskiy2020image}[1] introduces the Vision Transformer for the task of image classification. Unlike a typical transformer architecture that consists of an encoder followed by a decoder, the ViT architecture as shown in figure 3, utilizes several encoder blocks to extract the image features and then employs a Multilayer Perceptron (MLP) head model to classify the image based on these processed features.
+
+Each encoder block comprises alternating layers of Multi-Headed Self Attention (MSA), LayerNorm (LN) and MLP blocks which are fully connected feedforward layers[2]. Residual Skip connections are used after every MSA and MLP block to pass features from disconnected layers to other layers that are present deeper into the architecture [3]. Self-Attention introduced in \ref{vaswani2017attention}[4] is a technique used to understand the interaction between different tokens belonging to a particular sequence. If a certain token attends to another token, it means that they have an impact on each other with respect to the context of the entire sequence. Let us suppose that the input consists of an **m × n** matrix **I** composed of the **m n** dimensional word vectors associated with a sequence.  In self-attention, 3 sets of weight vectors are utilized, namely **W<sub>q</sub> , W<sub>k</sub> , and W<sub>v</sub>** of dimension **n × D**. **D** is the dimension of the embedding used in the transformer. The input matrix is separately multiplied with each weight matrix **W<sub>q</sub> , W<sub>k</sub> , and W<sub>v</sub>** to obtain the queries (**Q**), keys (**K**) and values (**V**) matrices, each of dimension **m × D**. This is illustrated in equations 1, 2 and 3. This step has a complexity of O(**mD<sup>2</sup>**).
+
+Q = IW<sub>q</sub>			(1)
+
+K = IW<sub>k</sub>			(2)
+
+V = IW<sub>v</sub>			(3)
+
+Matrix **Q** is multiplied with the transpose of matrix **K** and then divided by the square root of the dimension of **K** which is **d<sub>K</sub>** to obtain the attention matrix **Z** as shown in 4.
+
+Z = softmax((QK<sup>T</sup>)/$\sqrt{}$d<sub>k</sub>)			(4)
+
+The softmax of matrix **Z** gives us the attention weights matrix which can be multiplied with matrix **V** to obtain the final self-attention output matrix **O** as shown in equation 5. 
+
+O = ZV			(5)
+
+This step has a complexity of O(**m<sup>2</sup>D**). The total complexity of the self-attention layer is O(**mD<sup>2</sup> + m<sup>2</sup>D**) which is quadratic. For example, if we apply self-attention to a sequence of **m** words we would obtain an attention matrix of dimension **m × m** which depicts the relationship between each word in the m-worded sequence. Hence, self-attention has quadratic computational complexity. MSA computes self-attention by splitting the query, key and value parameters in **R** ways and passes each split through an attention head to perform the computation in parallel. MSA improves the predictive power of the transformer and has a quadratic complexity as well. The LayerNorm layer normalizes the distribution of the output from the previous layer.   
+
+In the scenario of applying self-attention to an **m × m** image having **m<sup>2</sup>** pixels, the self-attention weight matrix will have a dimension of **m<sup>2</sup> × m<sup>2</sup>** which is very costly to compute and store even for state-of-the-art hardware. Therefore, instead of employing attention at the pixel level, the authors break each image into patches that are passed through the attention mechanism to see which patches attend to one another. This gives rise to smaller attention matrices which reduces the computational complexity of the transformer. Therefore, the input 2D image of dimension **H × W × C** is reshaped into **N** flattened 2D patches of size **P<sup>2</sup> × C**. Here, (H,W) is the resolution of the image, C is the number of channels, **(P,P)** is the resolution of the patch and **N = H×W/P<sup>2</sup>** is the number of patches for the image. In order to retain positional information, 1D position embeddings corresponding to each patch embedding is added. These patch embeddings and positional embeddings are passed through the transformer encoder and only the [class] embedding output is fed into the MLP head consisting of two layers with a GELU non-linearity to classify the image. This ViT can be pre-trained on large datasets and then fine-tuned to smaller downstream tasks.
 
 ## Comparing the Vision Transformer with ResNet
 
@@ -101,11 +121,11 @@ Now let us analyze the model performance of the Vision Transformer (ViT) with a 
 
 As noted previously, Transformers lack inductive biases inherent to CNNs. Thus to trump inductive bias, we train the Vision Transformer (ViT) on larger datasets (14M-300M images). After model pre-training, we transfer the models to classify several benchmark datasets, as shown in table<>. It has been observed that Vision Transformers (ViT) outperform ResNets with the same computational budget.
 
-Another way to induce a sliver of inductive bias is to use CNN [1] feature maps as Inputs to our Vision Transformer instead of image patches. The input sequence of the Transformer is created by flattening the CNN feature maps and applying the input patch embedding and positional embeddings as described in the previous section. The authors call this a "Hybrid ViT".
+Another way to induce a sliver of inductive bias is to use CNN [5] feature maps as Inputs to our Vision Transformer instead of image patches. The input sequence of the Transformer is created by flattening the CNN feature maps and applying the input patch embedding and positional embeddings as described in the previous section. The authors call this a "Hybrid ViT".
 
 ## Vision Transformer Variants and Experimental Results
 
-For the Vision Transformer, we experiment with three model variations, as detailed in Table 1. We use brief notation to indicate the model size and the input patch size: ViT-L/16 refers to our Vision Transformer model "Large" variant with a 16×16 input image patch size. Since Transformer's sequence length is inversely proportional to the square of the patch size, thus models with smaller patch sizes are computationally more expensive. The performance of each of these models is compared to our baseline "ResNet (BiT)" [2] that performs supervised transfer learning with large ResNets. 
+For the Vision Transformer, we experiment with three model variations, as detailed in Table 1. We use brief notation to indicate the model size and the input patch size: ViT-L/16 refers to our Vision Transformer model "Large" variant with a 16×16 input image patch size. Since Transformer's sequence length is inversely proportional to the square of the patch size, thus models with smaller patch sizes are computationally more expensive. The performance of each of these models is compared to our baseline "ResNet (BiT)" [6] that performs supervised transfer learning with large ResNets. 
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/imaginesus/10605_mini_project_images/main/vit_variants_table.png" alt="ViT variants"/>
@@ -161,6 +181,28 @@ After conducting the experiments, the authors inspect the Vision Transformer to 
   <figcaption align="center">Figure 7 - Plot of Mean attention distance versus Network depth of the ViT-L/16 model.</figcaption>
 </p>
 
-This research work presents a simple yet scalable strategy to perform image classification that supersedes conventional CNN architectures when combined with pre-training on large datasets. However, the authors also mention that this architecture could be employed in other computer vision applications as well. \ref{khan2022transformers} is a survey paper that discusses many other works that extend the ViT to not only recognition tasks like image classification, object detection, action recognition, and segmentation, but also to generative modeling, multi-modal tasks like visual question answering, video processing, low-level vision and 3D analysis. The study also mentioned transformers like Linformer introduced in \ref{wang2020linformer} and Reformer presented by \ref{kitaev2020reformer} that reduced the complexity of self-attention from O(n2) to O(n) and O(n log(n)) respectively. This study concluded that for the different tasks, scaling up in terms of compute, model size and quantity of training data improves performance of the vision transformer. Overall, this research work has had a significant impact on the domain of computer vision as well as developing compute efficient models for large scale training of images.
+This research work presents a simple yet scalable strategy to perform image classification that supersedes conventional CNN architectures when combined with pre-training on large datasets. However, the authors also mention that this architecture could be employed in other computer vision applications as well. \ref{khan2022transformers}[7] is a survey paper that discusses many other works that extend the ViT to not only recognition tasks like image classification, object detection, action recognition, and segmentation, but also to generative modeling, multi-modal tasks like visual question answering, video processing, low-level vision and 3D analysis. The study also mentioned transformers like Linformer introduced in \ref{wang2020linformer}[8] and Reformer presented by \ref{kitaev2020reformer}[9] that reduced the complexity of self-attention from O(n2) to O(n) and O(n log(n)) respectively. This study concluded that for the different tasks, scaling up in terms of compute, model size and quantity of training data improves performance of the vision transformer. Overall, this research work has had a significant impact on the domain of computer vision as well as developing compute efficient models for large scale training of images.
 
 ## References
+
+[1] @article{dosovitskiy2020image, title={An image is worth 16x16 words: Transformers for image recognition at scale}, author={Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and others}, journal={arXiv preprint arXiv:2010.11929}, year={2020} }
+
+[2] https://blog.paperspace.com/vision-transformers/
+
+[3] https://theaisummer.com/skip-connections/
+
+[4] @article{vaswani2017attention, title={Attention is all you need}, author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia}, journal={Advances in neural information processing systems}, volume={30}, year={2017} }
+
+[5] Y. LeCun, B. Boser, J. Denker, D. Henderson, R. Howard, W. Hubbard, and L. Jackel. Backpropagation applied to handwritten zip code recognition. Neural Computation, 1:541–551, 1989
+
+[6] Diederik P. Kingma and Jimmy Ba. Adam: A method for stochastic optimization. In ICLR, 2015. Alexander Kolesnikov, Lucas Beyer, Xiaohua Zhai, Joan Puigcerver, Jessica Yung, Sylvain Gelly, and Neil Houlsby. Big transfer (BiT): General visual representation learning. In ECCV, 2020.
+
+[7] @article{khan2022transformers, title={Transformers in vision: A survey}, author={Khan, Salman and Naseer, Muzammal and Hayat, Munawar and Zamir, Syed Waqas and Khan, Fahad Shahbaz and Shah, Mubarak}, journal={ACM computing surveys (CSUR)}, volume={54}, number={10s}, pages={1--41}, year={2022}, publisher={ACM New York, NY} }
+
+[8] @article{wang2020linformer, title={Linformer: Self-attention with linear complexity}, author={Wang, Sinong and Li, Belinda Z and Khabsa, Madian and Fang, Han and Ma, Hao}, journal={arXiv preprint arXiv:2006.04768}, year={2020} }
+
+[9] @article{kitaev2020reformer, title={Reformer: The efficient transformer}, author={Kitaev, Nikita and Kaiser, {\L}ukasz and Levskaya, Anselm}, journal={arXiv preprint arXiv:2001.04451}, year={2020} }
+
+[10] https://viso.ai/deep-learning/vision-transformer-vit/
+
+[11] https://towardsdatascience.com/the-inductive-bias-of-ml-models-and-why-you-should-care-about-it-979fe02a1a56
