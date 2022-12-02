@@ -106,7 +106,7 @@ V = IW<sub>v</sub>			(3)
 
 Matrix **Q** is multiplied with the transpose of matrix **K** and then divided by the square root of the dimension of **K** which is **d<sub>K</sub>** to obtain the attention matrix **Z** as shown in 4.
 
-Z = softmax((QK<sup>T</sup>)/$\sqrt{}$d<sub>k</sub>)			(4)
+$Z = softmax(\frac{QK^{T}}{\sqrt{d_{k}}})$ 			(4)
 
 The softmax of matrix **Z** gives us the attention weights matrix which can be multiplied with matrix **V** to obtain the final self-attention output matrix **O** as shown in equation 5. 
 
@@ -120,7 +120,7 @@ In the scenario of applying self-attention to an **m × m** image having **m<sup
 
 Now let us analyze the model performance of the Vision Transformer (ViT) with a classic large-scale image recognition model like ResNet as the benchmark. The article compares these models based on multiple criteria like- classification accuracies on multiple datasets, size of datasets required for pre-training, and the pre-training compute time for the models.
 
-As noted previously, Transformers lack inductive biases inherent to CNNs. Thus to trump inductive bias, we train the Vision Transformer (ViT) on larger datasets (14M-300M images). After model pre-training, we transfer the models to classify several benchmark datasets, as shown in table<>. It has been observed that Vision Transformers (ViT) outperform ResNets with the same computational budget.
+As noted previously, Transformers lack inductive biases inherent to CNNs. Thus to trump inductive bias, we train the Vision Transformer (ViT) on larger datasets (14M-300M images). After model pre-training, we transfer the models to classify several benchmark datasets, as shown in Table 2. It has been observed that Vision Transformers (ViT) outperform ResNets with the same computational budget.
 
 Another way to induce a sliver of inductive bias is to use CNN [5] feature maps as Inputs to our Vision Transformer instead of image patches. The input sequence of the Transformer is created by flattening the CNN feature maps and applying the input patch embedding and positional embeddings as described in the previous section. The authors call this a "Hybrid ViT".
 
@@ -166,7 +166,7 @@ Below are the results of training the ViT variants using the same hyperparameter
 
 To understand how the Vision Transformer model compares with ResNet when controlled for pre-training compute time, we assess the performance vs. computation cost of several variations of each model. The Authors also throw the "Hybrid ViT" model into the mix to analyze its performance compared to ViT and ResNet.
 
-The figure below shows the transfer performance time vs. total pre-training compute time of the models under study. As observed from table<>, The ViT models outperform the ResNet models, with the Hybrid ViT models showing a slight outperformance compared to the traditional ViT models. This is a surprising find as we expect that inductive bias from CNN feature maps would assist the ViT model in better training and classification by our Hybrid ViT variant.
+The figure below shows the transfer performance time vs. total pre-training compute time of the models under study. As observed from Table 2, The ViT models outperform the ResNet models, with the Hybrid ViT models showing a slight outperformance compared to the traditional ViT models. This is a surprising find as we expect that inductive bias from CNN feature maps would assist the ViT model in better training and classification by our Hybrid ViT variant.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/imaginesus/10605_mini_project_images/main/scaling_study.png" alt="scaling study"/>
